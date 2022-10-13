@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>GraphQL example</h1>
+        <p>Example based on the <a href="https://beta.gss-data.org.uk/cube/explore?uri=https%3A%2F%2Fgss-cogs.github.io%2Fprovider-forest-research%2Fout%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon.csv%23dataset-catalog-entry">Net annual change in forest carbon</a> dataset.</p>
+        <div class="row">
+            <div class="col">
+                <h2 class="mt-4"><label for="query">GraphQL query </label></h2>
+                <textarea id="query" rows="10" class="form-control">
+                {
+                    Year 
+                    Observation
+                    Geography 
+                        {label}
+                }
+        </textarea>
+            </div>
+            <div class="col">
+                <h2 class="mt-4"><label for="context">JsonLD context</label></h2>
+                <textarea id="context" rows="10" class="form-control">
+            {
+                "@context": {
+                    "label": "http://www.w3.org/2000/01/rdf-schema#label",
+                    "Year": {
+                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#dimension/year"
+                    },
+                    "Observation": {
+                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#measure/co2-equivalent"
+                    },
+                    "Geography": {
+                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#dimension/geography"
+                    }
+                }
+            }
+        </textarea>
+            </div>
+        </div>
+        <div>
+            <p>
+                <button type="button" class="btn btn-outline-primary btn-lg mt-4" onclick="go()">Get data</button>
+            </p>
+        </div>
+
+        <div class="row">
+            <table class="table table-bordered">
+                <thead id="tableHead">
+                </thead>
+                <tbody id="table">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <script>
+
+        //Based on https://query.linkeddatafragments.org/#datasources=https%3A%2F%2Fbeta.gss-data.org.uk%2Fsparql&query=%7Byear%20%0Aobservation%0Ageography%7B%0A%20%20%20%20label%0A%20%20%7D%0A%7D&queryContext=%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%40context%22%3A%20%7B%0A%22label%22%3A%20%22http%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23label%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22year%22%3A%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%40id%22%3A%20%22https%3A%2F%2Fgss-cogs.github.io%2Fprovider-forest-research%2Fout%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon.csv%23dimension%2Fyear%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22observation%22%3A%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%40id%22%3A%20%22https%3A%2F%2Fgss-cogs.github.io%2Fprovider-forest-research%2Fout%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon.csv%23measure%2Fco2-equivalent%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22geography%22%3A%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%40id%22%3A%20%22https%3A%2F%2Fgss-cogs.github.io%2Fprovider-forest-research%2Fout%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon.csv%23dimension%2Fgeography%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22rainfall%22%3A%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%40id%22%3A%20%22http%3A%2F%2Fgss-data.org.uk%2Fdef%2Fclimate-change%2Fmeasure%2Frainfall%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20&resultsToTree=false&queryFormat=graphql
+        const results = document.getElementById("results");
+        const tableRef = document.getElementById("table");
+        const tableHeader = document.getElementById("tableHead");
+        let sparqlQuery = "";
+        let context = ""
+        let contextJSON = [];
+
+        displayResults = (r, o) => {
+            tableHeader.innerHTML = ""
+            tableRef.innerHTML = ""
+
+            let newHeader = tableHeader.insertRow(-1);
+            for (i = 0; i < r.length; i++) {
+                let newRow = tableRef.insertRow(-1);
+                for (j = 0; j < o.length; j++) {
+                    let lookup = o[j]
+                    let Cell = newRow.insertCell(j);
+                    let Text = document.createTextNode(r[i][lookup].value);
+                    Cell.appendChild(Text);
+                    if (i === 0) {
+                        let headCell = newHeader.insertCell(j);
+                        let headText = document.createTextNode(lookup);
+                        headCell.appendChild(headText);
+                    }
+                }
+            }
+        }
+
+
+        fetchData = (sq, o) => {
+            fetch("https://beta.gss-data.org.uk/sparql?query=" + sq, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then((response) => response.json())
+                .then(json => {
+                    data = json.results.bindings
+                    displayResults(data, o)
+                }).catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        parseQuery = (q) => {
+            // q = q.replace('{', '');
+            // q = q.replace('}', '');
+            // q=q.trim()
+            let labels = []
+            let options = q.trim().split(/\s+/);
+            length = options.length
+            for(i=0; i < length; i++){
+                if (options[i] == "{") {
+                    options.splice(i, 1)
+                }
+                
+                if (options[i] == "{label}") {
+                    let indexField = i-1
+                    labels.push(options[indexField])
+                    options.splice(i, 1)
+                }
+                if (options[i] == "}") {
+                    options.splice(i, 1)
+                }
+            }
+            buildQuery(options, labels)
+        }
+
+        buildQuery = (o, l) => {
+            let select = "SELECT "
+            let where = "WHERE {"
+            for (i = 0; i < o.length; i++) {
+                select = select + `?${o[i]} `
+                let id = contextJSON[o[i]]["@id"]
+                if (l.indexOf(o[i]) != -1){
+                    where = where + `?s <${id}> ?${o[i]}uri . `
+                    where = where + `?${o[i]}uri <http://www.w3.org/2000/01/rdf-schema#label> ?${o[i]} .`
+                } else {
+                    where = where + `?s <${id}> ?${o[i]} . `
+                }
+            }
+            where = where + ` }`
+            sparqlQuery = select + where;
+            sparqlQuery = encodeURIComponent(sparqlQuery)
+            fetchData(sparqlQuery, o)
+        }
+
+        go = () => {
+            context = document.getElementById("context").value;
+            context = JSON.parse(context);
+            contextJSON = context["@context"]
+            let query = document.getElementById("query").value;
+            parseQuery(query)
+        }
+    </script>
+
+</html>
