@@ -229,13 +229,12 @@
                 dimensionName = dimensionName.replace(/-/g, '_');
                 dimensionName = dimensionName.replace(/\(/g, '_');
                 dimensionName = dimensionName.replace(/\)/g, '_');
+                dimensionName = dimensionName.replace(/,)/g, '_');
                 dimensionName = dimensionName.toLowerCase();
 
                 let contextValue = `  "${dimensionName}": {\r\n     "@id": "${dimensionURI}" \r\n    }`
                 if (i != data.length-1){
-                    console.log(i)
                     contextValue = `${contextValue} ,`
-
                 }
                 string = `${string} ${contextValue} \r\n`
             }
