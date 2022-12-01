@@ -13,9 +13,6 @@
 
     <div class="container">
         <h1>GraphQL example</h1>
-        <p>Example based on the <a
-                href="https://beta.gss-data.org.uk/cube/explore?uri=https%3A%2F%2Fgss-cogs.github.io%2Fprovider-forest-research%2Fout%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon.csv%23dataset-catalog-entry">Net
-                annual change in forest carbon</a> dataset.</p>
         <select id="selectDataset" onchange="selectDataset()" title="Select Dataset">
             <option>Select a dataset</option>
         </select>
@@ -24,9 +21,9 @@
                 <h2 class="mt-4"><label for="query">GraphQL query </label></h2>
                 <textarea id="query" rows="10" class="form-control">
                 {
-                    Year 
-                    Observation
-                    Geography 
+                    year 
+                    co2_equivalent
+                    geography 
                         {label}
                 }
         </textarea>
@@ -34,22 +31,31 @@
             <div class="col">
                 <h2 class="mt-4"><label for="context">JsonLD context</label></h2>
                 <textarea id="context" rows="10" class="form-control">
-            {
-                "@context": {
-                    "label": "http://www.w3.org/2000/01/rdf-schema#label",
-                    "Year": {
-                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#dimension/year"
-                    },
-                    "Observation": {
-                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#measure/co2-equivalent"
-                    },
-                    "Geography": {
-                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#dimension/geography"
-                    }
-                }
+            { 
+                "@context" : {
+                    "label": "http://www.w3.org/2000/01/rdf-schema#label", 
+                    "measure_type": {
+                        "@id": "http://purl.org/linked-data/cube#measureType" 
+                    } , 
+                    "unit_of_measure": {
+                        "@id": "http://purl.org/linked-data/sdmx/2009/attribute#unitMeasure" 
+                    } , 
+                    "geography": {
+                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#dimension/geography" 
+                    } , 
+                    "year": {
+                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#dimension/year" 
+                    } , 
+                    "co2_equivalent": {
+                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#measure/co2-equivalent" 
+                    } 
+                } 
             }
         </textarea>
             </div>
+            <p>Initial based on the <a
+                href="https://beta.gss-data.org.uk/cube/explore?uri=https%3A%2F%2Fgss-cogs.github.io%2Fprovider-forest-research%2Fout%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon.csv%23dataset-catalog-entry">Net
+                annual change in forest carbon</a> dataset.</p>
         </div>
         <div>
             <p>
