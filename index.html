@@ -13,15 +13,17 @@
 
     <div class="container">
         <h1>GraphQL example</h1>
-        <p>Example based on the <a href="https://beta.gss-data.org.uk/cube/explore?uri=https%3A%2F%2Fgss-cogs.github.io%2Fprovider-forest-research%2Fout%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon.csv%23dataset-catalog-entry">Net annual change in forest carbon</a> dataset.</p>
+        <select id="selectDataset" onchange="selectDataset()" title="Select Dataset">
+            <option>Select a dataset</option>
+        </select>
         <div class="row">
             <div class="col">
                 <h2 class="mt-4"><label for="query">GraphQL query </label></h2>
                 <textarea id="query" rows="10" class="form-control">
                 {
-                    Year 
-                    Observation
-                    Geography 
+                    year 
+                    co2_equivalent
+                    geography 
                         {label}
                 }
         </textarea>
@@ -29,22 +31,31 @@
             <div class="col">
                 <h2 class="mt-4"><label for="context">JsonLD context</label></h2>
                 <textarea id="context" rows="10" class="form-control">
-            {
-                "@context": {
-                    "label": "http://www.w3.org/2000/01/rdf-schema#label",
-                    "Year": {
-                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#dimension/year"
-                    },
-                    "Observation": {
-                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#measure/co2-equivalent"
-                    },
-                    "Geography": {
-                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#dimension/geography"
-                    }
-                }
+            { 
+                "@context" : {
+                    "label": "http://www.w3.org/2000/01/rdf-schema#label", 
+                    "measure_type": {
+                        "@id": "http://purl.org/linked-data/cube#measureType" 
+                    } , 
+                    "unit_of_measure": {
+                        "@id": "http://purl.org/linked-data/sdmx/2009/attribute#unitMeasure" 
+                    } , 
+                    "geography": {
+                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#dimension/geography" 
+                    } , 
+                    "year": {
+                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#dimension/year" 
+                    } , 
+                    "co2_equivalent": {
+                        "@id": "https://gss-cogs.github.io/provider-forest-research/out/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon/net-annual-change-in-forest-carbon.csv#measure/co2-equivalent" 
+                    } 
+                } 
             }
         </textarea>
             </div>
+            <p>Initial based on the <a
+                href="https://beta.gss-data.org.uk/cube/explore?uri=https%3A%2F%2Fgss-cogs.github.io%2Fprovider-forest-research%2Fout%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon.csv%23dataset-catalog-entry">Net
+                annual change in forest carbon</a> dataset.</p>
         </div>
         <div>
             <p>
@@ -64,11 +75,11 @@
 
 
     <script>
-
         //Based on https://query.linkeddatafragments.org/#datasources=https%3A%2F%2Fbeta.gss-data.org.uk%2Fsparql&query=%7Byear%20%0Aobservation%0Ageography%7B%0A%20%20%20%20label%0A%20%20%7D%0A%7D&queryContext=%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%40context%22%3A%20%7B%0A%22label%22%3A%20%22http%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23label%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22year%22%3A%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%40id%22%3A%20%22https%3A%2F%2Fgss-cogs.github.io%2Fprovider-forest-research%2Fout%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon.csv%23dimension%2Fyear%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22observation%22%3A%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%40id%22%3A%20%22https%3A%2F%2Fgss-cogs.github.io%2Fprovider-forest-research%2Fout%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon.csv%23measure%2Fco2-equivalent%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22geography%22%3A%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%40id%22%3A%20%22https%3A%2F%2Fgss-cogs.github.io%2Fprovider-forest-research%2Fout%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon.csv%23dimension%2Fgeography%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22rainfall%22%3A%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%40id%22%3A%20%22http%3A%2F%2Fgss-data.org.uk%2Fdef%2Fclimate-change%2Fmeasure%2Frainfall%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20&resultsToTree=false&queryFormat=graphql
         const results = document.getElementById("results");
         const tableRef = document.getElementById("table");
         const tableHeader = document.getElementById("tableHead");
+        const selectMenu = document.getElementById("selectDataset");
         let sparqlQuery = "";
         let context = ""
         let contextJSON = [];
@@ -117,13 +128,13 @@
             let labels = []
             let options = q.trim().split(/\s+/);
             length = options.length
-            for(i=0; i < length; i++){
+            for (i = 0; i < length; i++) {
                 if (options[i] == "{") {
                     options.splice(i, 1)
                 }
-                
+
                 if (options[i] == "{label}") {
-                    let indexField = i-1
+                    let indexField = i - 1
                     labels.push(options[indexField])
                     options.splice(i, 1)
                 }
@@ -140,14 +151,14 @@
             for (i = 0; i < o.length; i++) {
                 select = select + `?${o[i]} `
                 let id = contextJSON[o[i]]["@id"]
-                if (l.indexOf(o[i]) != -1){
+                if (l.indexOf(o[i]) != -1) {
                     where = where + `?s <${id}> ?${o[i]}uri . `
                     where = where + `?${o[i]}uri <http://www.w3.org/2000/01/rdf-schema#label> ?${o[i]} .`
                 } else {
                     where = where + `?s <${id}> ?${o[i]} . `
                 }
             }
-            where = where + ` }`
+            where = where + ` } LIMIT 100`
             sparqlQuery = select + where;
             sparqlQuery = encodeURIComponent(sparqlQuery)
             fetchData(sparqlQuery, o)
@@ -160,6 +171,89 @@
             let query = document.getElementById("query").value;
             parseQuery(query)
         }
+
+        //get list of datasets
+        let query =
+            "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX dcat: <http://www.w3.org/ns/dcat#> SELECT DISTINCT ?s ?t WHERE { <http://gss-data.org.uk/catalog/datasets> dcat:record ?s . ?s rdfs:label ?t . ?s <http://xmlns.com/foaf/0.1/primaryTopic> ?r . ?r <http://publishmydata.com/pmdcat#datasetContents> ?c . ?c <http://purl.org/linked-data/cube#structure> ?o . ?o <http://purl.org/linked-data/cube#componentProperty> ?d . ?d rdfs:label ?l} ORDER BY ASC(?t) LIMIT 1000";
+        query = encodeURIComponent(query)
+        fetch("https://beta.gss-data.org.uk/sparql?query=" + query, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then((response) => response.json())
+            .then(json => {
+                data = json.results.bindings
+                populateSelect(data)
+            }).catch(function (error) {
+                console.log(error);
+            });
+
+
+
+        //populate select to allow user to pick one
+        populateSelect = (data) => {
+            for (i = 0; i < data.length; i++) {
+                selectMenu.options[selectMenu.options.length] = new Option(data[i].t.value, data[i].s.value);
+            }
+        }
+
+
+        //once selected get list of dimensions
+
+        selectDataset = () => {
+            let datasetURI = selectMenu.value
+            let query =
+                `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?d ?t WHERE { BIND(<${datasetURI}> AS ?s) ?s <http://xmlns.com/foaf/0.1/primaryTopic> ?r . ?r <http://publishmydata.com/pmdcat#datasetContents> ?c . ?c <http://purl.org/linked-data/cube#structure> ?o . ?o <http://purl.org/linked-data/cube#componentProperty> ?d . ?d rdfs:label ?t } LIMIT 100`;
+            query = encodeURIComponent(query)
+            fetch("https://beta.gss-data.org.uk/sparql?query=" + query, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then((response) => response.json())
+                .then(json => {
+                    data = json.results.bindings
+                    if (data.length == 0){
+                        alert("Try a different dataset, structure does not matych pattern")
+                    }
+                    populateLdContext(data)
+                }).catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        //populate LD context
+
+        populateLdContext = (data) => {
+            let string = `{ \r\n "@context" : {\r\n   "label": "http://www.w3.org/2000/01/rdf-schema#label", \r\n`
+            for (i=0; i < data.length; i++) {
+                let dimensionName = data[i].t.value
+                let dimensionURI = data[i].d.value
+
+                dimensionName = dimensionName.replace(/\s/g, '_');
+                dimensionName = dimensionName.replace(/-/g, '_');
+                dimensionName = dimensionName.replace(/\(/g, '_');
+                dimensionName = dimensionName.replace(/\)/g, '_');
+                dimensionName = dimensionName.replace(/\,/g, '_');
+                dimensionName = dimensionName.toLowerCase();
+
+                let contextValue = `  "${dimensionName}": {\r\n     "@id": "${dimensionURI}" \r\n    }`
+                if (i != data.length-1){
+                    contextValue = `${contextValue} ,`
+                }
+                string = `${string} ${contextValue} \r\n`
+            }
+            string = `${string} } \r\n }`
+        document.getElementById("context").value = string
+        }
+
+
+
+        //populate example query (first 2 with one label?)
+
+
+        //write out possible options below table
     </script>
 
 </html>
