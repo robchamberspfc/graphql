@@ -15,6 +15,9 @@
         <h1>GraphQL example</h1>
         <p>Allows you to select a dataset from the drop down list (based on datasets in GSS beta) and will generate a simple JsonLD context to allow creation of a graphQL query. </p><p>This JsonLD context is then used to map to a spaqrl query and return the data.</p>
         <p>Example based on the <a href="https://beta.gss-data.org.uk/cube/explore?uri=https%3A%2F%2Fgss-cogs.github.io%2Fprovider-forest-research%2Fout%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon%2Fnet-annual-change-in-forest-carbon.csv%23dataset-catalog-entry">Net annual change in forest carbon</a> dataset.</p>
+        <select id="selectDataset" onchange="selectDataset()" title="Select Dataset">
+            <option>Select a dataset</option>
+        </select>
         <div class="row">
             <div class="col">
                 <h2 class="mt-4"><label for="query">GraphQL query </label></h2>
