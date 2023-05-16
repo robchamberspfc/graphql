@@ -217,7 +217,7 @@
                 .then(json => {
                     data = json.results.bindings
                     if (data.length == 0){
-                        alert("Try a different dataset, structure does not matych pattern")
+                        alert("Try a different dataset, structure does not match pattern")
                     }
                     populateLdContext(data)
                 }).catch(function (error) {
