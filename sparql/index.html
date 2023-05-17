@@ -218,7 +218,7 @@
                 let datasetURI = selectMenu.value
                 let link = selectMenu.selectedOptions[0].getAttribute("data-value")
                 link = "https://beta.gss-data.org.uk/cube/explore?uri=" + encodeURIComponent(link)
-                document.getElementById('datasetLink').innerHTML=`<a class="btn btn-outline-primary btn-lg mt-4" href="${link}" target=”_blank”>View dataset</a>`
+                document.getElementById('datasetLink').innerHTML=`<a class="btn btn-outline-primary btn-lg mt-4" href="${link}" target='_blank'>View dataset</a>`
                 let query =
                     `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?d ?t WHERE { BIND(<${datasetURI}> AS ?s) ?s <http://xmlns.com/foaf/0.1/primaryTopic> ?r . ?r <http://publishmydata.com/pmdcat#datasetContents> ?c . ?c <http://purl.org/linked-data/cube#structure> ?o . ?o <http://purl.org/linked-data/cube#componentProperty> ?d . ?d rdfs:label ?t } LIMIT 100`;
                 query = encodeURIComponent(query)
