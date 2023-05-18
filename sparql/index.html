@@ -62,7 +62,8 @@
         </div>
         <div>
             <p>
-                <button type="button" class="btn btn-outline-primary btn-lg mt-4" onclick="go()">Run query</button><span id = "datasetLink"></span>
+                <button type="button" class="btn btn-outline-primary btn-lg mt-4" onclick="go(10)">Run query</button><button type="button" class="btn btn-outline-primary btn-lg mt-4" onclick="go(1)">Run guess labels query</button><span
+                    id="datasetLink"></span>
             </p>
         </div>
 
@@ -75,7 +76,7 @@
             </table>
         </div>
         <div class="row">
-            <div id="sparql"  class="text-bg-dark rounded-3">
+            <div id="sparql" class="text-bg-dark rounded-3">
             </div>
             <div id="sparqlLink">
             </div>
@@ -116,8 +117,18 @@
                 }
             }
 
+            guessLabels = (data, o) => {
+                let labels = []
+                for (i = 0; i < o.length; i++) {
+                    let type = data["0"][o[i]].type
+                    if (type === "uri"){
+                        labels.push(o[i])
+                    }
+                }
+                buildQuery(o, labels, 10)
+            }
 
-            fetchData = (sq, o) => {
+            fetchData = (sq, o, n) => {
                 fetch("https://beta.gss-data.org.uk/sparql?query=" + sq, {
                         headers: {
                             'Accept': 'application/json'
@@ -126,14 +137,19 @@
                     .then((response) => response.json())
                     .then(json => {
                         data = json.results.bindings
-                        displayResults(data, o)
+                        if (n == 1) {
+                            guessLabels(data, o)
+                        } else {
+                            displayResults(data, o)
+                        }
+
                     }).catch(function (error) {
                         console.log(error);
                         alert("Error in query")
                     });
             }
 
-            parseQuery = (q) => {
+            parseQuery = (q, n) => {
                 let labels = []
                 let options = q.trim().split(/\s+/);
                 length = options.length
@@ -151,10 +167,11 @@
                         options.splice(i, 1)
                     }
                 }
-                buildQuery(options, labels)
+                buildQuery(options, labels, n)
             }
 
-            buildQuery = (o, l) => {
+            buildQuery = (o, l, n) => {
+                console.log(l)
                 let select = "SELECT "
                 let where = "WHERE {"
                 for (i = 0; i < o.length; i++) {
@@ -167,20 +184,21 @@
                         where = where + `?s <${id}> ?${o[i]} .`
                     }
                 }
-                where = where + ` } LIMIT 10`
+                where = where + ` } LIMIT ${n}`
                 sparqlQuery = select + where;
                 sparqlQuery = encodeURIComponent(sparqlQuery)
                 document.getElementById("sparql").innerHTML = sparqlQuery
-                document.getElementById("sparqlLink").innerHTML = "<a href=" + betaURL + sparqlQuery + "> Test link</a>"
-                fetchData(sparqlQuery, o)
+                document.getElementById("sparqlLink").innerHTML = "<a href=" + betaURL + sparqlQuery +
+                    "> Test link</a>"
+                fetchData(sparqlQuery, o, n)
             }
 
-            go = () => {
+            go = (n) => {
                 context = document.getElementById("context").value;
                 context = JSON.parse(context);
                 contextJSON = context["@context"]
                 let query = document.getElementById("query").value;
-                parseQuery(query)
+                parseQuery(query, n)
             }
 
             //get list of datasets
@@ -207,7 +225,7 @@
                 for (i = 0; i < data.length; i++) {
                     let option = new Option(data[i].t.value, data[i].s.value);
                     selectMenu.options[selectMenu.options.length] = option;
-                    option.setAttribute("data-value",data[i].r.value);
+                    option.setAttribute("data-value", data[i].r.value);
                 }
             }
 
@@ -218,7 +236,8 @@
                 let datasetURI = selectMenu.value
                 let link = selectMenu.selectedOptions[0].getAttribute("data-value")
                 link = "https://beta.gss-data.org.uk/cube/explore?uri=" + encodeURIComponent(link)
-                document.getElementById('datasetLink').innerHTML=`<a class="btn btn-outline-primary btn-lg mt-4" href="${link}" target='_blank'>View dataset</a>`
+                document.getElementById('datasetLink').innerHTML =
+                    `<a class="btn btn-outline-primary btn-lg mt-4" href="${link}" target='_blank'>View dataset</a>`
                 let query =
                     `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?d ?t WHERE { BIND(<${datasetURI}> AS ?s) ?s <http://xmlns.com/foaf/0.1/primaryTopic> ?r . ?r <http://publishmydata.com/pmdcat#datasetContents> ?c . ?c <http://purl.org/linked-data/cube#structure> ?o . ?o <http://purl.org/linked-data/cube#componentProperty> ?d . ?d rdfs:label ?t } LIMIT 100`;
                 query = encodeURIComponent(query)
@@ -292,10 +311,6 @@
                 string = `${string} \r\n }`
                 document.getElementById("query").value = string
             }
-
         </script>
 
 </html>
-
-
-
