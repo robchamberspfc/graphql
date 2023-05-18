@@ -104,8 +104,14 @@
                     let newRow = tableRef.insertRow(-1);
                     for (j = 0; j < o.length; j++) {
                         let lookup = o[j]
+                        console.log(r[i][lookup])
                         let Cell = newRow.insertCell(j);
-                        let Text = document.createTextNode(r[i][lookup].value);
+                        if (r[i][lookup] === undefined) {
+test = ""
+                        } else {
+test = r[i][lookup].value
+                        }
+                        let Text = document.createTextNode(test);
                         Cell.appendChild(Text);
                         if (i === 0) {
                             let headCell = newHeader.insertCell(j);
@@ -155,8 +161,9 @@
             }
 
             buildQuery = (o, l) => {
-                let select = "SELECT "
-                let where = "WHERE {"
+                let graph = selectMenu.selectedOptions[0].getAttribute("data-value2")
+                let select = "SELECT ?s "
+                let where = `WHERE { graph <${graph}> {`
                 for (i = 0; i < o.length; i++) {
                     select = select + `?${o[i]} `
                     let id = contextJSON[o[i]]["@id"]
@@ -164,10 +171,10 @@
                         where = where + `?s <${id}> ?${o[i]}uri . `
                         where = where + `?${o[i]}uri <http://www.w3.org/2000/01/rdf-schema#label> ?${o[i]} .`
                     } else {
-                        where = where + `?s <${id}> ?${o[i]} .`
+                        where = where + `optional {?s <${id}> ?${o[i]} }`
                     }
                 }
-                where = where + ` } LIMIT 10`
+                where = where + ` }} LIMIT 10`
                 sparqlQuery = select + where;
                 sparqlQuery = encodeURIComponent(sparqlQuery)
                 document.getElementById("sparql").innerHTML = sparqlQuery
@@ -185,7 +192,7 @@
 
             //get list of datasets
             let query =
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX dcat: <http://www.w3.org/ns/dcat#> SELECT DISTINCT ?s ?t ?r WHERE { <http://gss-data.org.uk/catalog/datasets> dcat:record ?s . ?s rdfs:label ?t . ?s <http://xmlns.com/foaf/0.1/primaryTopic> ?r . ?r <http://publishmydata.com/pmdcat#datasetContents> ?c . ?c <http://purl.org/linked-data/cube#structure> ?o . ?o <http://purl.org/linked-data/cube#componentProperty> ?d . ?d rdfs:label ?l} ORDER BY ASC(?t) LIMIT 1000";
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX dcat: <http://www.w3.org/ns/dcat#> SELECT DISTINCT ?s ?t ?r ?graph WHERE { <http://gss-data.org.uk/catalog/datasets> dcat:record ?s . ?s rdfs:label ?t . ?s <http://xmlns.com/foaf/0.1/primaryTopic> ?r . ?r <http://publishmydata.com/pmdcat#graph> ?graph . ?r <http://publishmydata.com/pmdcat#datasetContents> ?c . ?c <http://purl.org/linked-data/cube#structure> ?o . ?o <http://purl.org/linked-data/cube#componentProperty> ?d . ?d rdfs:label ?l} ORDER BY ASC(?t) LIMIT 1000";
             query = encodeURIComponent(query)
             fetch("https://beta.gss-data.org.uk/sparql?query=" + query, {
                     headers: {
@@ -208,6 +215,7 @@
                     let option = new Option(data[i].t.value, data[i].s.value);
                     selectMenu.options[selectMenu.options.length] = option;
                     option.setAttribute("data-value",data[i].r.value);
+                    option.setAttribute("data-value2",data[i].graph.value);
                 }
             }
 
